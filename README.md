@@ -26,7 +26,7 @@ Y (as long as you keep the dimentionality consistant).
 
 Reference:
 ===============
-Refer to the **/doc** to get more detail.
+Refer to the **/doc** to get more detail (tbd).
 
 ***
 
