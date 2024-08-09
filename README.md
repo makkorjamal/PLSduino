@@ -11,7 +11,7 @@ Partial Least Squares (PLS) is a statistical method used for modeling relationsh
 Usage:
 ==========
 Download all the source files.
-There are three examples for user to use.
+There is one example for user to use.
 >* **examples/basic_usage/basic_usage.ino**,this example shows a simple usuage using predefined matrices
 ## TODO
 >* **examples/read_XY_from_SD_card/read_from_XY_from_SD.ino**,this example shows how to read X (features matrice) Y (response matrice) from a file saved in an SD card for example.
