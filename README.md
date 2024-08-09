@@ -14,13 +14,13 @@ Download all the source files.
 There are three examples for user to use.
 >* **examples/basic_usage/basic_usage.ino**,this example shows a simple usuage using predefined matrices
 ## TODO
->* **examples/read_XY_from_SD_card/read_from_files.ino**,this example shows how to read X (features matrice) Y (response matrice)
+>* **examples/read_XY_from_SD_card/read_from_XY_from_SD.ino**,this example shows how to read X (features matrice) Y (response matrice) from a file saved in an SD card for example.
 
 
 Notice:
 ============
->1. This library dependence on Arduino Eigen/Dense library and you need to install it first.
->2. Arduino/ESP32 are quite limited in computational capabilities. You can also load a pre trained matrix B nad use it to predict 
+>1. This library depends on Arduino Eigen/Dense library.
+>2. Arduino/ESP32 are quite limited in computational capabilities. You can also load a pre-trained matrix B and use it to predict 
 Y (as long as you keep the dimentionality consistant).
 
 
