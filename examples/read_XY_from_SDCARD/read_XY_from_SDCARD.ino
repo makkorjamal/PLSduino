@@ -1,3 +1,8 @@
+/*
+This code was tested on ESP32 S3 Vroom which has a 
+an embedded SD card already, other tests might be
+needed,
+*/
 #include "Arduino.h"
 #include "FS.h"
 #include "SD_MMC.h"
