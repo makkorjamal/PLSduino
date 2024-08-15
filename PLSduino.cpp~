@@ -56,8 +56,8 @@ void PLS::train(
 	for (int i = 0; i < Y.rows(); ++i)
 		Y.row(i) = Y.row(i) - mean0Y;
 
-	   MatrixXf T, U, W, C, P, Q, Bdiag;
-	   VectorXf t, w, u_old,e, c, p, q, b;
+        MatrixXf T, U, W, C, P, Q, Bdiag;
+        VectorXf t, w, u_old,e, c, p, q, b;
 	VectorXf u = VectorXf::Random(X.rows());
 	while (1)
 	{
@@ -78,29 +78,24 @@ void PLS::train(
 		}
 		b = t.transpose() * u;
 		assert(b.cols() == 1 && b.rows() == 1);
-		if (C.cols() == 0){
+		if (C.cols() == 0)
 			C = c;
-		}
-		else{
+		else
 			C.conservativeResize(C.rows(), C.cols() + 1);
 			C.col(C.cols() - 1) = c;
-		}
+
 		float temp = t.norm();
 		p = X.transpose() * t / (temp * temp);
-		if (P.cols() == 0){
+		if (P.cols() == 0)
 			P = p;
-		}
-		else{
+		else
 			P.conservativeResize(P.rows(), P.cols() + 1);
 			P.col(P.cols() - 1) = p;
-		}
-		if (Bdiag.cols() == 0){
+		if (Bdiag.cols() == 0)
 			Bdiag = b;
-		}
-		else{
+		else
 			Bdiag.conservativeResize(Bdiag.rows(), Bdiag.cols() + 1);
 			Bdiag.col(Bdiag.cols() - 1) = b;
-		}
 
 		X = X - t * p.transpose();
 		Y = Y - t * c.transpose();
