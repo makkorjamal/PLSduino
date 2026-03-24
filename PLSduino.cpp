@@ -24,15 +24,73 @@ PLS::PLS(int brate)
 PLS::PLS(
 	const MatrixXf &B,
 	const MatrixXf &meanX,
-	const MatrixXf &meanY ) : B(B), mean0X(meanX), mean0Y(meanY)
+	const MatrixXf &meanY )
 {
-	// nothing to do
+	setModel(B, meanX, meanY);
 }
 
 PLS::~PLS()
 {
 	//Default destructor
 }
+
+bool PLS::isModelShapeValid(
+	const MatrixXf &B,
+	const MatrixXf &meanX,
+	const MatrixXf &meanY ) const
+{
+	if (B.rows() == 0 || B.cols() == 0) {
+		return false;
+	}
+
+	if (meanX.rows() != 1 || meanY.rows() != 1) {
+		return false;
+	}
+
+	if (meanX.cols() != B.rows() || meanY.cols() != B.cols()) {
+		return false;
+	}
+
+	return true;
+}
+
+void PLS::printModelShapeError(
+	const MatrixXf &B,
+	const MatrixXf &meanX,
+	const MatrixXf &meanY ) const
+{
+	Serial.println("Invalid model dimensions");
+	Serial.print("B: ");
+	Serial.print(B.rows());
+	Serial.print("x");
+	Serial.println(B.cols());
+	Serial.print("meanX: ");
+	Serial.print(meanX.rows());
+	Serial.print("x");
+	Serial.println(meanX.cols());
+	Serial.print("meanY: ");
+	Serial.print(meanY.rows());
+	Serial.print("x");
+	Serial.println(meanY.cols());
+	Serial.println("Expected meanX to be 1xB.rows and meanY to be 1xB.cols");
+}
+
+bool PLS::setModel(
+	const MatrixXf &B,
+	const MatrixXf &meanX,
+	const MatrixXf &meanY )
+{
+	if (!isModelShapeValid(B, meanX, meanY)) {
+		printModelShapeError(B, meanX, meanY);
+		return false;
+	}
+
+	this->B = B;
+	this->mean0X = meanX;
+	this->mean0Y = meanY;
+	return true;
+}
+
 void PLS::train(
 	const MatrixXf &Xdata,
 	const MatrixXf &Ydata,
@@ -41,6 +99,11 @@ void PLS::train(
 	if (Xdata.rows() != Ydata.rows()){
 
 		Serial.println("X and Y dimentionality does not match");
+		return;
+	}
+
+	if (Xdata.rows() == 0 || Xdata.cols() == 0 || Ydata.cols() == 0) {
+		Serial.println("X and Y must not be empty");
 		return;
 	}
 
@@ -116,6 +179,16 @@ void PLS::train(
 MatrixXf PLS::predict(
 	const MatrixXf &v ) const
 {
+	if (B.rows() == 0 || B.cols() == 0) {
+		Serial.println("Cannot predict: model is not initialized");
+		return MatrixXf();
+	}
+
+	if (v.cols() != B.rows()) {
+		Serial.println("Cannot predict: input column count does not match model");
+		return MatrixXf();
+	}
+
 	MatrixXf temp;
 	MatrixXf result = MatrixXf::Zero(v.rows(),B.cols());
 	temp = v;
