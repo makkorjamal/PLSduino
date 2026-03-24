@@ -18,6 +18,7 @@ int baudrate = 115200;
 PLS pls(baudrate);
 
 bool readMatrix(fs::FS &fs, const char *path, MatrixXf &matrix);
+bool readModel(fs::FS &fs, const char *bPath, const char *meanXPath, const char *meanYPath);
 void printMatrix(const MatrixXf& mat);
 
 void setup() {
@@ -30,29 +31,22 @@ void setup() {
     return;
   }
 
+  if (!readModel(SD_MMC, "/B.csv", "/meanX.csv", "/meanY.csv")) {
+    return;
+  }
+
   MatrixXf X;
-  MatrixXf Y;
-  if (!readMatrix(SD_MMC, "/toyX.csv", X) || !readMatrix(SD_MMC, "/toyY.csv", Y)) {
+  if (!readMatrix(SD_MMC, "/predictX.csv", X)) {
     return;
   }
-
-  if (X.rows() != Y.rows()) {
-    Serial.println("X and Y row counts do not match");
-    return;
-  }
-
-  Serial.println("Training X");
-  printMatrix(X);
-  Serial.println("Training Y");
-  printMatrix(Y);
-
-  pls.train(X, Y);
 
   MatrixXf prediction = pls.predict(X);
   if (prediction.size() == 0) {
     return;
   }
 
+  Serial.println("Prediction input X");
+  printMatrix(X);
   Serial.println("Predicted Y");
   printMatrix(prediction);
 }
@@ -71,6 +65,37 @@ bool readMatrix(fs::FS &fs, const char *path, MatrixXf &matrix) {
 
   bool ok = PLSIO::loadMatrixFromCSV(file, matrix);
   file.close();
+  return ok;
+}
+
+bool readModel(fs::FS &fs, const char *bPath, const char *meanXPath, const char *meanYPath) {
+  Serial.println("Loading pretrained model");
+
+  File bFile = fs.open(bPath);
+  if (!bFile) {
+    Serial.println("Failed to open B matrix file");
+    return false;
+  }
+
+  File meanXFile = fs.open(meanXPath);
+  if (!meanXFile) {
+    Serial.println("Failed to open meanX file");
+    bFile.close();
+    return false;
+  }
+
+  File meanYFile = fs.open(meanYPath);
+  if (!meanYFile) {
+    Serial.println("Failed to open meanY file");
+    bFile.close();
+    meanXFile.close();
+    return false;
+  }
+
+  bool ok = PLSIO::loadModelFromCSV(bFile, meanXFile, meanYFile, pls);
+  bFile.close();
+  meanXFile.close();
+  meanYFile.close();
   return ok;
 }
 

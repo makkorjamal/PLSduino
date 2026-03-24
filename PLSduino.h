@@ -18,12 +18,24 @@ class PLS
 		inline void display(
 			const char *name,
 			const MatrixXf &value );
+		bool isModelShapeValid(
+			const MatrixXf &B,
+			const MatrixXf &meanX,
+			const MatrixXf &meanY ) const;
+		void printModelShapeError(
+			const MatrixXf &B,
+			const MatrixXf &meanX,
+			const MatrixXf &meanY ) const;
 
 	public:
 		PLS( );
 		PLS(int brate );
 		PLS( const MatrixXf &B, const MatrixXf &meanX, const MatrixXf &meanY );
 		~PLS();
+		bool setModel(
+			const MatrixXf &B,
+			const MatrixXf &meanX,
+			const MatrixXf &meanY );
 
 		void train(
 			const MatrixXf &Xdata,
